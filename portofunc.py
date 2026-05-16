@@ -1,8 +1,22 @@
+import json
+
+
 class Portofolio:
     def __init__(self):
         self.posisi = []
 
+    def _cek_ticker(self, ticker):
+        if not [i for i in self.posisi if i["ticker"] == ticker]:
+            return False
+        return True
+
     def add(self, ticker, lot, harga_beli, harga_sekarang):
+        if harga_beli <= 0 :
+            raise ValueError(f"Harga beli tidak valid")
+        if harga_sekarang <= 0:
+            raise ValueError(f"Harga sekarang tidak valid")
+        elif lot <= 0:
+            raise ValueError(f"Lot yang anda masukkan tidak valid")
         new = {
         "ticker": ticker,
         "lot": lot,
@@ -12,12 +26,21 @@ class Portofolio:
         self.posisi.append(new)
     
     def delete(self, ticker):
-        self.posisi[:] = [i for i in self.posisi if i["ticker"] != ticker]
+        if not self._cek_ticker(ticker):
+            raise ValueError(f"Ticker {ticker} tidak ditemukan")
+        else:
+            self.posisi[:] = [i for i in self.posisi if i["ticker"] != ticker]
 
     def update(self, ticker, harga_baru):
-        for i in self.posisi:
-            if i["ticker"] == ticker:
-                i["harga_sekarang"] = harga_baru
+        if not self._cek_ticker(ticker) :
+            raise ValueError(f"Ticker {ticker} tidak ditemukan")
+        elif harga_baru <= 0:
+            raise ValueError(f"Harga yang anda masukkan ({harga_baru}) tidak valid")
+        else:         
+            for i in self.posisi:
+                if i["ticker"] == ticker:
+                    i["harga_sekarang"] = harga_baru
+
     def hitung_profit(self, harga_sekarang, harga_beli, lot):
         return (harga_sekarang - harga_beli) * lot * 100
 
@@ -44,4 +67,15 @@ class Portofolio:
 
         print(f"Total profit: {total_profit}")
 
+    def simpan(self, filename="portofolio.json"):
+        """Simpan self.posisi ke file JSON."""
+        with open(filename, "w") as f:
+            json.dump(self.posisi, f)
 
+    def muat(self, filename="portofolio.json"):
+        """Baca file JSON dan isi self.posisi."""
+        try:
+            with open(filename, "r") as f:
+                self.posisi = json.load(f)
+        except FileNotFoundError:
+            pass
