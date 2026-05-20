@@ -34,9 +34,57 @@ def analisis_saham(df):
 # print(df["Close"].min())
 # print(df["Volume"].mean())
 # print(df["Close"].idxmax())
+# df = yf.download("BBCA.JK", period="1y")
+# df.columns = df.columns.droplevel("Ticker")
+
+# hasil = analisis_saham(df)
+# for k, v in hasil.items():
+#     print(f"{k}: {v}")
+import yfinance as yf
+
+def deteksi_anomali_volume(df, threshold=2):
+    """
+    Return DataFrame berisi hari-hari dengan volume anomali.
+    """
+    std = df["Volume"].std()
+    df["Z-score"] = (df["Volume"] - df["Volume"].mean())/ std 
+    # df["Volume_anomaly"] = (df["Z-score"] > 2) | (df["Z-score"] < -2)
+    df["Volume_anomaly"]  = (df["Z-score"].abs() > threshold)
+    df["Volume_BigEvent"] = (df["Z-score"] > 3) | (df["Z-score"] < -3)
+    
+    return df[df["Volume_anomaly"]]
+    #atau
+    # df["Volume_anomaly"] = df["Z-score"].abs() > 2
+def cek_harga_psikologis(harga, interval=500, tolerance=0.02):
+    """
+    Cek apakah harga mendekati level psikologis.
+    Level psikologis: kelipatan interval (500, 1000, 1500, dst)
+    Return dict: level terdekat dan apakah dalam tolerance.
+    """
+    ratio = round(harga/ interval)
+    psychological_level = ratio * interval
+    distance = abs(psychological_level - harga)/psychological_level
+    near = distance <= tolerance
+    data = {
+    "harga": harga,
+    "psychological_level": psychological_level,
+    "distance_percent": distance,
+    "within_tolerance": near
+    }
+
+    return data
+
 df = yf.download("BBCA.JK", period="1y")
 df.columns = df.columns.droplevel("Ticker")
 
-hasil = analisis_saham(df)
-for k, v in hasil.items():
-    print(f"{k}: {v}")
+anomali = deteksi_anomali_volume(df)
+print(f"Jumlah hari anomali: {len(anomali)}")
+print(anomali[["Close", "Volume", "Z-score"]].to_string())
+
+harga_anomali = anomali["Close"]
+
+for harga in harga_anomali:
+    hasil = cek_harga_psikologis(harga)
+    print(f"{harga} → level: {hasil['psychological_level']}, "
+          f"jarak: {hasil['distance_percent']:.1%}, "
+          f"dekat: {hasil['within_tolerance']}")
