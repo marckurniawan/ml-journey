@@ -1,6 +1,6 @@
 import yfinance as yf
 import pandas as pd
-
+import numpy as np
 
 def analisis_saham(df):
     """
@@ -23,18 +23,22 @@ def analisis_saham(df):
     return datas
 
 def deteksi_anomali_volume(df, threshold=2):
-    """
-    Return DataFrame berisi hari-hari dengan volume anomali.
-    """
+   
     std = df["Volume"].std()
     df["Z-score"] = (df["Volume"] - df["Volume"].mean())/ std 
     # df["Volume_anomaly"] = (df["Z-score"] > 2) | (df["Z-score"] < -2)
     df["Volume_anomaly"]  = (df["Z-score"].abs() > threshold)
-    df["Volume_BigEvent"] = (df["Z-score"] > 3) | (df["Z-score"] < -3)
-    
+    df["Volume_BigEvent"] = (df["Z-score"].abs() > 3)
+    df["Daily_Return"] = df["Close"].pct_change()
+    df["price_direction"] = np.where(
+        df["Daily_Return"] >= 0,
+        "up",
+        "down"
+    )
+
     return df[df["Volume_anomaly"]]
-    #atau
-    # df["Volume_anomaly"] = df["Z-score"].abs() > 2
+    
+
 def cek_harga_psikologis(harga, interval=500, tolerance=0.02):
     """
     Cek apakah harga mendekati level psikologis.

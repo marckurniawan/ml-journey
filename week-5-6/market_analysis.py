@@ -23,18 +23,23 @@ def main():
     data = analisis_saham(df)
 
     anomaly = deteksi_anomali_volume(df)
-    anomaly_price = anomaly["Close"]
+
     print("\n=== Ringkasan Saham ===")
     for key, value in data.items():
         print(f"{key}: {value}")
-    for harga in anomaly_price:
+    for index, row in anomaly.iterrows():
+
+        harga = row["Close"]
+
         key_level = cek_harga_psikologis(harga)
 
         print(
-            f"{harga} → "
+            
+            f"harga: {harga:.2f} → "
             f"level: {key_level['psychological_level']}, "
             f"jarak: {key_level['distance_percent']:.1%}, "
-            f"dekat: {key_level['within_tolerance']}"
+            f"dekat: {key_level['within_tolerance']}, "
+            f"arah: {row['price_direction']}"
         )
     print(f"Trend: {cek_tren(df)}")
 
