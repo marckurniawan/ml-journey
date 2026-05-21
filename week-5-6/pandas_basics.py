@@ -22,26 +22,6 @@ def analisis_saham(df):
     
     return datas
 
-# Download data BBCA 1 tahun terakhir
-# df = yf.download("BBCA.JK", period="1y")
-# # print(df.head())
-# # print(df.shape)
-# # print(df.dtypes)
-# df.columns = df.columns.droplevel("Ticker")
-
-
-# print(df["Close"].max())
-# print(df["Close"].min())
-# print(df["Volume"].mean())
-# print(df["Close"].idxmax())
-# df = yf.download("BBCA.JK", period="1y")
-# df.columns = df.columns.droplevel("Ticker")
-
-# hasil = analisis_saham(df)
-# for k, v in hasil.items():
-#     print(f"{k}: {v}")
-import yfinance as yf
-
 def deteksi_anomali_volume(df, threshold=2):
     """
     Return DataFrame berisi hari-hari dengan volume anomali.
@@ -73,6 +53,26 @@ def cek_harga_psikologis(harga, interval=500, tolerance=0.02):
     }
 
     return data
+# Download data BBCA 1 tahun terakhir
+# df = yf.download("BBCA.JK", period="1y")
+# # print(df.head())
+# # print(df.shape)
+# # print(df.dtypes)
+# df.columns = df.columns.droplevel("Ticker")
+
+
+# print(df["Close"].max())
+# print(df["Close"].min())
+# print(df["Volume"].mean())
+# print(df["Close"].idxmax())
+# df = yf.download("BBCA.JK", period="1y")
+# df.columns = df.columns.droplevel("Ticker")
+
+# hasil = analisis_saham(df)
+# for k, v in hasil.items():
+#     print(f"{k}: {v}")
+# import yfinance as yf
+
 
 # df = yf.download("BBCA.JK", period="1y")
 # df.columns = df.columns.droplevel("Ticker")
@@ -89,11 +89,11 @@ def cek_harga_psikologis(harga, interval=500, tolerance=0.02):
 #           f"jarak: {hasil['distance_percent']:.1%}, "
 #           f"dekat: {hasil['within_tolerance']}")
 
-tickers = ["BBCA.JK", "BMRI.JK", "TLKM.JK"]
-df = yf.download(tickers, period="1y")
+# tickers = ["BBCA.JK", "BMRI.JK", "TLKM.JK"]
+# df = yf.download(tickers, period="1y")
 
-# print(df.head())
-# print(df.columns)
-close_df = df["Close"]
-print(close_df.pct_change())
-print(close_df.corr())
+# # print(df.head())
+# # print(df.columns)
+# close_df = df["Close"]
+# print(close_df.pct_change())
+# print(close_df.corr())
