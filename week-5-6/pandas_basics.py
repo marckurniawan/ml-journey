@@ -74,17 +74,26 @@ def cek_harga_psikologis(harga, interval=500, tolerance=0.02):
 
     return data
 
-df = yf.download("BBCA.JK", period="1y")
-df.columns = df.columns.droplevel("Ticker")
+# df = yf.download("BBCA.JK", period="1y")
+# df.columns = df.columns.droplevel("Ticker")
 
-anomali = deteksi_anomali_volume(df)
-print(f"Jumlah hari anomali: {len(anomali)}")
-print(anomali[["Close", "Volume", "Z-score"]].to_string())
+# anomali = deteksi_anomali_volume(df)
+# print(f"Jumlah hari anomali: {len(anomali)}")
+# print(anomali[["Close", "Volume", "Z-score"]].to_string())
 
-harga_anomali = anomali["Close"]
+# harga_anomali = anomali["Close"]
 
-for harga in harga_anomali:
-    hasil = cek_harga_psikologis(harga)
-    print(f"{harga} → level: {hasil['psychological_level']}, "
-          f"jarak: {hasil['distance_percent']:.1%}, "
-          f"dekat: {hasil['within_tolerance']}")
+# for harga in harga_anomali:
+#     hasil = cek_harga_psikologis(harga)
+#     print(f"{harga} → level: {hasil['psychological_level']}, "
+#           f"jarak: {hasil['distance_percent']:.1%}, "
+#           f"dekat: {hasil['within_tolerance']}")
+
+tickers = ["BBCA.JK", "BMRI.JK", "TLKM.JK"]
+df = yf.download(tickers, period="1y")
+
+# print(df.head())
+# print(df.columns)
+close_df = df["Close"]
+print(close_df.pct_change())
+print(close_df.corr())
