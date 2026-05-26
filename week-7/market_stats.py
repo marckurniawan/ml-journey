@@ -15,8 +15,8 @@ def volatility(df, period=20):
     
     return {"latest_volatility" : latest_std,
             "annualized_volatility" : annualized_std,
-
             }
+
 def volume_analysis(df, mode="konservatif"):
     thresholds = {
        "agresif" : 1,
@@ -31,13 +31,13 @@ def volume_analysis(df, mode="konservatif"):
     volume_std = volume.std()
     
     if todays_volume > volume_mean + threshold * volume_std:
-        volume_status = "High Volume"
+        volume_status = "high"
 
     elif todays_volume < volume_mean - threshold * volume_std:
-        volume_status = "Low Volume"
+        volume_status = "low"
 
     else:
-        volume_status = "Normal Volume"
+        volume_status = "normal"
     
     return {"volume_status": volume_status,
             "todays_volume" : todays_volume,
@@ -45,25 +45,25 @@ def volume_analysis(df, mode="konservatif"):
             "volume_ratio" :  todays_volume / volume_mean
             }
 
-df = yf.download("BBCA.JK", period="1y")
-df.columns = df.columns.droplevel("Ticker")
+# df = yf.download("BBCA.JK", period="1y")
+# df.columns = df.columns.droplevel("Ticker")
 
 
 
-# print(f"Mean:     {returns.mean():.4f}")
-# # print(f"Std:      {returns.std():.4f}")
-# # print(f"Skewness: {returns.skew():.4f}")
-# # print(f"Kurtosis: {returns.kurtosis():.4f}")
-# threshold = returns.std() * 2
-# extreme = returns[returns.abs() > threshold]
-# print(f"Persen hari ekstrem: {len(extreme)/len(returns):.1%}")
+# # print(f"Mean:     {returns.mean():.4f}")
+# # # print(f"Std:      {returns.std():.4f}")
+# # # print(f"Skewness: {returns.skew():.4f}")
+# # # print(f"Kurtosis: {returns.kurtosis():.4f}")
+# # threshold = returns.std() * 2
+# # extreme = returns[returns.abs() > threshold]
+# # print(f"Persen hari ekstrem: {len(extreme)/len(returns):.1%}")
 
-data = volatility(df)
+# data = volatility(df)
 
-for key, value in data.items():
-    print(f"{key} : {value}")
+# for key, value in data.items():
+#     print(f"{key} : {value}")
 
-volume = volume_analysis(df, "agresif")
+# volume = volume_analysis(df, "agresif")
 
-for key, value in volume.items():
-    print(f"{key} : {value}")
+# for key, value in volume.items():
+#     print(f"{key} : {value}")
