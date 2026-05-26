@@ -12,7 +12,7 @@ def main():
     basic_data = analisis_saham(df)
 
 
-    trend = cek_tren(df)
+    trend = cek_tren(df)    
 
     confirmed_trend = cek_trend_confirmed(df)
 
