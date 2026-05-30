@@ -84,3 +84,10 @@ y_pred = best_model.predict(X_test)
 
 print("\nClassification Report (Test Set)")
 print(classification_report(y_test, y_pred))
+import pandas as pd
+importances = pd.Series(
+    best_model.feature_importances_,
+    index=X_train.columns
+).sort_values(ascending=False)
+
+print(importances)

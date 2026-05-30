@@ -1,9 +1,11 @@
 import numpy as np
 
 def zscore_volume(df, threshold=2):
-
-    std = df["Volume"].std()
-    df["Z-score"] = (df["Volume"] - df["Volume"].mean())/ std 
+    rolling_mean = df["Volume"].rolling(window=20).mean()
+    rolling_std = df["Volume"].rolling(window=20).std()
+    df["Z-score"] = (df["Volume"] - rolling_mean) / rolling_std
+    # std = df["Volume"].std()
+    # df["Z-score"] = (df["Volume"] - df["Volume"].mean())/ std 
     # df["Volume_anomaly"] = (df["Z-score"] > 2) | (df["Z-score"] < -2)
     df["Volume_anomaly"]  = (df["Z-score"].abs() > threshold)
     df["Volume_BigEvent"] = (df["Z-score"].abs() > 3)
@@ -29,10 +31,9 @@ def period_volatility(df, period=20):
 
     
 
-def price_direction(df):
-    daily_return = df["Close"].pct_change()
-    df["price_direction"] = np.sign(daily_return)
-
+def rate_of_change(df, period=5):
+    # df["roc"]= (df["Close"] - df["Close"].shift(period)) / df["Close"].shift(period) * 100
+    df["rate_of_change"] = df["Close"].pct_change(periods=period) * 100   
     return df
 
 def near_psych_level(df, interval=500, tolerance=0.02):
@@ -61,14 +62,14 @@ def features(df):
     df = zscore_volume(df)
     df = ma_trend(df)
     df = period_volatility(df)
-    df = price_direction(df)
+    df = rate_of_change(df)
     df = near_psych_level(df)
     
     feature_cols = [
         "Z-score",
         "trend",
         "period_volatility",
-        "price_direction",
+        "rate_of_change",
         "near_psych_level"
     ]
 
@@ -87,7 +88,8 @@ import yfinance as yf
 df = yf.download("BBCA.JK", period="2y")
 df.columns = df.columns.droplevel("Ticker")
 
-dataset = buat_dataset(df)
-print(dataset.shape)
-print(dataset.head())
-print(dataset["target"].value_counts())
+if __name__ == "__main__":
+    dataset = buat_dataset(df)
+    print(dataset.shape)
+    print(dataset.head())
+    print(dataset["target"].value_counts())
